@@ -2,11 +2,11 @@ class Game
   @player_one = ''
   @player_two = ''
 
-  def self.error_check_player_one
+  private_class_method def self.error_check_player_one
     player_one_move
   end
 
-  def self.error_check_player_two
+  private_class_method def self.error_check_player_two
     player_two_move
   end
 
@@ -17,16 +17,19 @@ class Game
     puts "Player 2, what's your name?"
     @player_two = gets.chomp
     puts "Welcome #{@player_two}!"
-    puts 'Let the game begin!'
+    puts "Let the game begin!\n\n"
+    puts 'Rules: Pick a number corresponding to the tile of choice.'
+    initial_state
+    player_one_move
   end
 
-  def self.initial_state
-    puts '1|2|3'
-    puts '4|5|6'
-    puts '7|8|9'
+  private_class_method def self.initial_state
+    puts "\n1 | 2 | 3"
+    puts '4 | 5 | 6'
+    puts "7 | 8 | 9\n\n"
   end
 
-  def self.player_one_move
+  private_class_method def self.player_one_move
     puts "#{@player_one} make your move."
     move_one = gets.chomp
     case move_one.to_i
@@ -98,10 +101,16 @@ class Game
       return error_check_player_one
     end
     game_state
+    winning_condition
+    return if @@game_over == true
+
+    draw
+    return if @@stallmate == true
+
     player_two_move
   end
 
-  def self.player_two_move
+  private_class_method def self.player_two_move
     puts "#{@player_two} make your move."
     move_one = gets.chomp
     case move_one.to_i
@@ -173,26 +182,87 @@ class Game
       return error_check_player_two
     end
     game_state
+    winning_condition
+    return if @@game_over == true
+
+    draw
+    return if @@stallmate == true
+
     player_one_move
   end
 
-  def self.game_state
-    puts "#{@@board_state[0][0]}|#{@@board_state[0][1]}|#{@@board_state[0][2]}"
-    puts "#{@@board_state[1][0]}|#{@@board_state[1][1]}|#{@@board_state[1][2]}"
-    puts "#{@@board_state[2][0]}|#{@@board_state[2][1]}|#{@@board_state[2][2]}"
+  private_class_method def self.game_state
+    puts "\n#{@@board_state[0][0]} | #{@@board_state[0][1]} | #{@@board_state[0][2]}"
+    puts "#{@@board_state[1][0]} | #{@@board_state[1][1]} | #{@@board_state[1][2]}"
+    puts "#{@@board_state[2][0]} | #{@@board_state[2][1]} | #{@@board_state[2][2]}\n\n"
   end
 
-  def self.winning_condition; end
+  private_class_method def self.winning_condition
+    if (@@board_state[0][0] == @@board_state[1][0]) && (@@board_state[0][0] == @@board_state[2][0]) && @@board_state[0][0] == 'X'
+      puts "Game's set, #{@player_one} is the winner!"
+      @@game_over = true
+    elsif (@@board_state[0][1] == @@board_state[1][1]) && (@@board_state[0][1] == @@board_state[2][1]) && @@board_state[0][1] == 'X'
+      puts "Game's set, #{@player_one} is the winner!"
+      @@game_over = true
+    elsif (@@board_state[0][2] == @@board_state[1][2]) && (@@board_state[0][2] == @@board_state[2][2]) && @@board_state[0][2] == 'X'
+      puts "Game's set, #{@player_one} is the winner!"
+      @@game_over = true
+    elsif (@@board_state[0][0] == @@board_state[0][1]) && (@@board_state[0][0] == @@board_state[0][2]) && @@board_state[0][0] == 'X'
+      puts "Game's set, #{@player_one} is the winner!"
+      @@game_over = true
+    elsif (@@board_state[1][0] == @@board_state[1][1]) && (@@board_state[1][0] == @@board_state[1][2]) && @@board_state[1][0] == 'X'
+      puts "Game's set, #{@player_one} is the winner!"
+      @@game_over = true
+    elsif (@@board_state[2][0] == @@board_state[2][1]) && (@@board_state[2][0] == @@board_state[2][2]) && @@board_state[2][0] == 'X'
+      puts "Game's set, #{@player_one} is the winner!"
+      @@game_over = true
+    elsif (@@board_state[0][0] == @@board_state[1][1]) && (@@board_state[0][0] == @@board_state[2][2]) && @@board_state[0][0] == 'X'
+      puts "Game's set, #{@player_one} is the winner!"
+      @@game_over = true
+    elsif (@@board_state[0][2] == @@board_state[1][1]) && (@@board_state[0][2] == @@board_state[2][0]) && @@board_state[0][2] == 'X'
+      puts "Game's set, #{@player_one} is the winner!"
+      @@game_over = true
+      # down below
+    elsif (@@board_state[0][0] == @@board_state[1][0]) && (@@board_state[0][0] == @@board_state[2][0]) && @@board_state[0][0] == 'O'
+      puts "Game's set, #{@player_two} is the winner!"
+      @@game_over = true
+    elsif (@@board_state[0][1] == @@board_state[1][1]) && (@@board_state[0][1] == @@board_state[2][1]) && @@board_state[0][1] == 'O'
+      puts "Game's set, #{@player_two} is the winner!"
+      @@game_over = true
+    elsif (@@board_state[0][2] == @@board_state[1][2]) && (@@board_state[0][2] == @@board_state[2][2]) && @@board_state[0][2] == 'O'
+      puts "Game's set, #{@player_two} is the winner!"
+      @@game_over = true
+    elsif (@@board_state[0][0] == @@board_state[0][1]) && (@@board_state[0][0] == @@board_state[0][2]) && @@board_state[0][0] == 'O'
+      puts "Game's set, #{@player_two} is the winner!"
+      @@game_over = true
+    elsif (@@board_state[1][0] == @@board_state[1][1]) && (@@board_state[1][0] == @@board_state[1][2]) && @@board_state[1][0] == 'O'
+      puts "Game's set, #{@player_two} is the winner!"
+      @@game_over = true
+    elsif (@@board_state[2][0] == @@board_state[2][1]) && (@@board_state[2][0] == @@board_state[2][2]) && @@board_state[2][0] == 'O'
+      puts "Game's set, #{@player_two} is the winner!"
+      @@game_over = true
+    elsif (@@board_state[0][0] == @@board_state[1][1]) && (@@board_state[0][0] == @@board_state[2][2]) && @@board_state[0][0] == 'O'
+      puts "Game's set, #{@player_two} is the winner!"
+      @@game_over = true
+    elsif (@@board_state[0][2] == @@board_state[1][1]) && (@@board_state[0][2] == @@board_state[2][0]) && @@board_state[0][2] == 'O'
+      puts "Game's set, #{@player_two} is the winner!"
+      @@game_over = true
+    end
+  end
 
-  @game_over = false
+  @@game_over = false
+  @@stallmate = false
+
+  private_class_method def self.draw
+    if @@board_state.flatten.include?('-') == false
+      puts "It's a Draw!"
+      @@stallmate = true
+    end
+  end
 
   @@board_state = [%w[- - -],
                    %w[- - -],
                    %w[- - -]]
 end
 
-# Game.start_game
-# Game.initial_state
-# Game.game_state
 Game.start_game
-Game.player_one_move
